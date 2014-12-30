@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>New Year Countdown</title>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+		<style>
+			@-webkit-keyframes backgroundGradient {
+			    0%{background-position:0% 31%}
+			    50%{background-position:100% 70%}
+			    100%{background-position:0% 31%}
+			}
+			@-moz-keyframes backgroundGradient {
+			    0%{background-position:0% 31%}
+			    50%{background-position:100% 70%}
+			    100%{background-position:0% 31%}
+			}
+			@keyframes backgroundGradient { 
+			    0%{background-position:0% 31%}
+			    50%{background-position:100% 70%}
+			    100%{background-position:0% 31%}
+			}
+			* {
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				-webkit-transition: all 0.5s ease;
+				-moz-transition: all 0.5s ease;
+				transition: all 0.5s ease;
+			}
+			html, body {
+				background: linear-gradient(311deg, #246655, #2d5c71, #132a0f);
+				background-size: 600% 600%;
+				-webkit-animation: backgroundGradient 15s ease infinite;
+				-moz-animation: backgroundGradient 15s ease infinite;
+				animation: backgroundGradient 15s ease infinite;
+				font-family: "Open Sans", sans-serif;
+				font-size: 1rem;
+				color: #eee;
+				width: 100vw;
+				height: 100vh;
+				overflow: hidden;
+			}
+			#title {
+				font-family: "Pacifico", sans-serif;
+				font-size: 4rem;
+				position: absolute;
+				width: 100vw;
+				height: 100px;
+			}
+			#container {
+				position: absolute;
+				width: 100vw;
+				height: 300px;
+			}
+			#countdown {
+				font-size: 2rem;
+			}
+			#time {
+				font-size: 3rem;
+			}
+			#snowflakeContainer {
+			    position: absolute;
+			    left: 0px;
+			    top: 0px;
+			    display: none;
+			}
+			.snowflake {
+			    padding-left: 15px;
+			    font-family: Cambria, Georgia, serif;
+			    font-size: 14px;
+			    line-height: 24px;
+			    position: fixed;
+			    color: #FFFFFF;
+			    user-select: none;
+			    z-index: 1000;
+			}
+			.snowflake:hover {
+			    cursor: default;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="title">New Year Countdown Clock</div>
+		<div id="container">
+			<div id="countdown">We've still got some time!</div>
+			<div id="time">00:00:00</div>
+		</div>
+		<div id="snowflakeContainer">
+		    <p class="snowflake">*</p>
+		</div>
+		<script src="fallingsnow.js"></script>
+		<script>
+		function reset() {
+			document.getElementById("countdown").innerHTML = "See you next year!";
+			document.getElementById("countdown").style["font-size"] = "3rem";
+			document.getElementById("time").style["font-size"] = "2rem";
+		}
+		function decrement() {
+			var value = parseInt(document.getElementById("countdown").innerHTML);
+			if ((value - 1) === 0) {
+				var horn = new Audio("horn.mp3");
+				horn.play();
+				document.getElementById("title").innerHTML = "Happy New Year " + new Date().getFullYear() +"!";
+				document.getElementById("countdown").innerHTML = "0";
+				setTimeout(reset, 1000);
+			} else if (value < 12) {
+				document.getElementById("countdown").style["font-size"] = "5rem";
+				document.getElementById("countdown").innerHTML = value - 1;
+				setTimeout(decrement, 1000);
+			} else {
+				document.getElementById("countdown").innerHTML = value - 1;
+				setTimeout(decrement, 1000);
+			}
+		}
+		function checkDay() {
+			var date = new Date;
+			if (date.getMonth() === 11) {
+				document.getElementById("snowflakeContainer").style["display"] = "block";
+				if (date.getDate() === 31) {
+					if (date.getHours() === 23) {
+						if (date.getMinutes() === 59) {
+							document.getElementById("countdown").innerHTML = 60 - new Date().getSeconds();
+							setTimeout(decrement, 1000);
+							document.getElementById("time").style["font-size"] = "1rem";
+						} else {
+							var minutesleft = (59 - date.getMinutes());
+							if (minutesleft === 1) {
+								if ((60 - date.getSeconds()) === 1) {
+									document.getElementById("countdown").innerHTML = "We've still got " + 1 + " second left!";
+								} else {
+									document.getElementById("countdown").innerHTML = "We've still got " + (60 - date.getSeconds()) + " seconds left!";
+								}
+								
+							} else {
+								document.getElementById("countdown").innerHTML = "We've still got " + minutesleft + " minutes left!";
+							}
+							setTimeout(checkDay, 1000);
+						}
+					} else {
+						var hoursleft = (23 - date.getHours());
+						if (hoursleft === 1) {
+							document.getElementById("countdown").innerHTML = "We've still got " + 1 + " hour left!";
+						} else {
+							document.getElementById("countdown").innerHTML = "We've still got " + hoursleft + " hours left!";
+						}
+						setTimeout(checkDay, 1000);
+					}
+				} else {
+					var daysleft = (31 - date.getDate());
+					if (daysleft === 1) {
+						document.getElementById("countdown").innerHTML = "We've still got " + 1 + " day left!";
+					} else {
+						document.getElementById("countdown").innerHTML = "We've still got " + daysleft + " days left!";
+					}
+					setTimeout(checkDay, 1000);
+				}
+			} else {
+				setTimeout(checkDay, 1000);
+			}
+		}
+		function setTime() {
+			var date = new Date;
+			var time = ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2);
+			document.getElementById("time").innerHTML = time;
+			setTimeout(setTime, 1000);
+		}
+		var container = document.getElementById('container');
+		container.style['margin-top'] = (((document.documentElement.clientHeight) / 2) - (container.offsetHeight / 2)) + 'px';
+		container.style['margin-left'] = (((document.documentElement.clientWidth) / 2) - (container.offsetWidth / 2)) + 'px';
+		var title = document.getElementById("title");
+		title.style['margin-left'] = (((document.documentElement.clientWidth) / 2) - (title.offsetWidth / 2)) + 'px';
+		setTime();
+		checkDay();
+		</script>
+	</body>
+</html>
